@@ -10,9 +10,9 @@ const Header = (props) => {
 
 const Part = ({ name, exercises }) => {
   return (
-    <div>
+    <span>
       {name} {exercises}
-    </div>
+    </span>
   )
 }
 
@@ -20,7 +20,7 @@ const Content = ({ course }) => {
   return (
     <div>
       {course.parts.map(element =>
-        <p>
+        <p key={element.id}>
           <Part name={element.name} exercises={element.exercises} />
         </p>
       )}
