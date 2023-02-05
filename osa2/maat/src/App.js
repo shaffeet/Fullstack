@@ -21,7 +21,7 @@ const Country = ({ country }) => {
       <h1>{country.name.common}</h1>
       <p>Capital: {country.capital}</p>
       <p>Area: {country.area}</p>
-      <h2>Languages:</h2>
+      <h3>Languages:</h3>
       <ul>
         {languages.map((language) => (
           <li key={language}>{language}</li>
@@ -32,14 +32,20 @@ const Country = ({ country }) => {
         alt={country.flags.alt}
         style={{ border: '1px solid black' }}
       />
+      <h2>Weather in {country.capital}</h2>
     </div>
   );
 };
 
 const CountryList = ({ countries, filter }) => {
+  const [selectedCountry, setSelectedCountry] = useState(null);
   const filtered = countries.filter((country) =>
     country.name.common.toLowerCase().includes(filter.toLowerCase())
   );
+
+  useEffect(() => {
+    setSelectedCountry(null);
+  }, [filter]);
 
   if (filtered.length > 10) {
     return <div>Too many matches, specify another filter</div>;
@@ -49,11 +55,19 @@ const CountryList = ({ countries, filter }) => {
     return <Country country={filtered[0]} />;
   }
 
+  const handleClick = (country) => {
+    setSelectedCountry(country);
+  };
+
   return (
     <div>
       {filtered.map((country) => (
-        <div key={country.name.common}>{country.name.common}</div>
+        <div key={country.name.common}>
+          {country.name.common}
+          <button onClick={() => handleClick(country)}>show</button>
+        </div>
       ))}
+      {selectedCountry && <Country country={selectedCountry} />}
     </div>
   );
 };
