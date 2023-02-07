@@ -14,6 +14,27 @@ const Filter = ({ filter, onChange }) => {
 };
 
 const Country = ({ country }) => {
+  const [weatherData, setWeatherData] = useState(null);
+  const [weatherIcon, setWeatherIcon] = useState('');
+  const api_key = process.env.REACT_APP_API_KEY;
+
+  useEffect(() => {
+    axios
+      .get(
+        `https://api.openweathermap.org/data/2.5/weather?q=${country.capital}&appid=${api_key}`
+      )
+      .then((response) => {
+        setWeatherData(response.data);
+        setWeatherIcon(
+          `http://openweathermap.org/img/wn/${response.data.weather[0].icon}@2x.png`
+        );
+      });
+  }, [country.capital, api_key]);
+
+  if (weatherData === null) {
+    return null;
+  }
+
   const languages = Object.values(country.languages);
   console.log(country);
   return (
@@ -33,6 +54,9 @@ const Country = ({ country }) => {
         style={{ border: '1px solid black' }}
       />
       <h2>Weather in {country.capital}</h2>
+      <p>Temperature {weatherData.main.temp - 272.15} Celsius</p>
+      <img src={weatherIcon} alt={weatherData.weather.main} />
+      <p>Wind {weatherData.wind.speed} m/s</p>
     </div>
   );
 };
