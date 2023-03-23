@@ -88,6 +88,7 @@ const App = () => {
       noteService
         .deleteName(id)
         .then(() => {
+          setStatus(false);
           setPersons(persons.filter((person) => person.id !== id));
           setErrorMessage(`Deleted ${personName}.`);
           setTimeout(() => {
@@ -132,6 +133,7 @@ const App = () => {
                 person.id !== existingPerson.id ? person : returnedNote
               )
             );
+            setStatus(true);
             setErrorMessage(`Updated the number for ${newName}.`);
             setTimeout(() => {
               setErrorMessage(null);
@@ -141,16 +143,26 @@ const App = () => {
         window.alert(`${newName} was not updated.`);
       }
     } else {
-      noteService.create(nameObject).then((returnedNote) => {
-        setPersons(persons.concat(returnedNote));
-        setNewName('');
-        setNewNumber('');
-        setShowAll(!showAll);
-        setErrorMessage(`Added ${nameObject.name}.`);
-        setTimeout(() => {
-          setErrorMessage(null);
-        }, 3000);
-      });
+      noteService
+        .create(nameObject)
+        .then((returnedPerson) => {
+          setPersons(persons.concat(returnedPerson));
+          setNewName('');
+          setNewNumber('');
+          setShowAll(!showAll);
+          setErrorMessage(`Added ${nameObject.name}.`);
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 3000);
+        })
+        .catch((error) => {
+          setStatus(false);
+          console.log(error.response.data.error);
+          setErrorMessage(error.response.data.error);
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 3000);
+        });
     }
   };
 
