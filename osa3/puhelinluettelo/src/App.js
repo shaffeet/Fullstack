@@ -150,6 +150,7 @@ const App = () => {
           setNewName('');
           setNewNumber('');
           setShowAll(!showAll);
+          setStatus(true);
           setErrorMessage(`Added ${nameObject.name}.`);
           setTimeout(() => {
             setErrorMessage(null);
