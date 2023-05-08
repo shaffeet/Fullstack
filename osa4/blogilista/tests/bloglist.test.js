@@ -38,6 +38,12 @@ test("right amount of JSON format blogs", async () => {
   expect(response.body).toHaveLength(initialBlogs.length);
 });
 
+test("verifying ids", async () => {
+  const response = await api.get("/api/blogs");
+  const id = response.body.map((r) => r.id);
+  expect(id).toBeDefined();
+});
+
 afterAll(async () => {
   await mongoose.connection.close();
 });
