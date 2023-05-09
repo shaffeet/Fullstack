@@ -44,6 +44,21 @@ test("valid blog can be added", async () => {
   expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1);
 });
 
+test("if likes has no value, make it 0", async () => {
+  const newBlog = {
+    title: "New Title",
+    author: "New Author",
+    url: "http://www.new.com",
+  };
+
+  const response = await api.post("/api/blogs").send(newBlog).expect(201);
+
+  expect(response.body.likes).toBe(0);
+
+  const blogsAtEnd = await helper.blogsInDb();
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1);
+});
+
 afterAll(async () => {
   await mongoose.connection.close();
 });
