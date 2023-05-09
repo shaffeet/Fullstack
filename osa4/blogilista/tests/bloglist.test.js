@@ -7,10 +7,10 @@ const Blog = require("../models/blog");
 
 beforeEach(async () => {
   await Blog.deleteMany({});
-  let blogObject = new Blog(helper.initialBlogs[0]);
-  await blogObject.save();
-  blogObject = new Blog(helper.initialBlogs[1]);
-  await blogObject.save();
+
+  const blogObjects = helper.initialBlogs.map((blog) => new Blog(blog));
+  const promiseArray = blogObjects.map((blog) => blog.save());
+  await Promise.all(promiseArray);
 });
 
 test("right amount of JSON format blogs", async () => {
@@ -57,6 +57,18 @@ test("if likes has no value, make it 0", async () => {
 
   const blogsAtEnd = await helper.blogsInDb();
   expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1);
+});
+
+test("if title or url undefined, give 400 Bad Request", async () => {
+  const newBlog = {
+    author: "New Author",
+    likes: 100,
+  };
+
+  await api.post("/api/blogs").send(newBlog).expect(400);
+
+  const blogsAtEnd = await helper.blogsInDb();
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length);
 });
 
 afterAll(async () => {
